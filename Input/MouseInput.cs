@@ -40,12 +40,15 @@ namespace Apedaile
         stateCommands[state].Add(action, new CommandEntry_M(button, pressOnly, callback, action));
       }
     }
-    
+
     public void Update(GameTime gameTime, GameStateEnum state)
     {
       MouseState mouseState = Mouse.GetState();
 
-      Dictionary<Actions, CommandEntry_M> commandEntries = stateCommands[state];
+      if (stateCommands.ContainsKey(state))
+      {
+
+        Dictionary<Actions, CommandEntry_M> commandEntries = stateCommands[state];
         foreach (CommandEntry_M entry in commandEntries.Values)
         {
           if (entry.pressOnly && buttonPressed(entry.button))
@@ -56,7 +59,7 @@ namespace Apedaile
           {
             entry.callback(gameTime, 1.0f);
           }
-        
+        }
       }
 
       previousState = mouseState;

@@ -54,19 +54,22 @@ namespace Apedaile
       {
         return;
       }
-
-      Dictionary<Actions, CommandEntry_K> commandEntries = stateCommands[state];
-      foreach (CommandEntry_K entry in commandEntries.Values)
+      if (stateCommands.ContainsKey(state))
       {
-        if (entry.keyPressOnly && keyPressed(entry.key))
+
+        Dictionary<Actions, CommandEntry_K> commandEntries = stateCommands[state];
+        foreach (CommandEntry_K entry in commandEntries.Values)
         {
-          entry.callback(gameTime, 1.0f);
+          if (entry.keyPressOnly && keyPressed(entry.key))
+          {
+            entry.callback(gameTime, 1.0f);
+          }
+          else if (!entry.keyPressOnly && keyState.IsKeyDown(entry.key))
+          {
+            entry.callback(gameTime, 1.0f);
+          }
+          previousState = keyState;
         }
-        else if (!entry.keyPressOnly && keyState.IsKeyDown(entry.key))
-        {
-          entry.callback(gameTime, 1.0f);
-        }
-        previousState = keyState;
       }
     }
 

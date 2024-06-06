@@ -1,7 +1,9 @@
+using System;
 using Apedaile;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 
 class MainMenu : GameState
 {
@@ -49,6 +51,7 @@ class MainMenu : GameState
     }
 
     private void PrintHello(GameTime gameTime, float value) {
-        System.Console.WriteLine("Left Button Pressed");
+        MouseState mouseState = Mouse.GetState();
+        System.Console.WriteLine(String.Format("X:{0} Y:{1}", mouseState.X, mouseState.Y));
     }
 }

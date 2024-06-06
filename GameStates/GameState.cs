@@ -6,21 +6,23 @@ using Microsoft.Xna.Framework.Graphics;
 
 namespace Apedaile
 {
-  public abstract class GameState : IGameState 
-  {
-    protected GraphicsDeviceManager graphics;
-    protected SpriteBatch spriteBatch;
-    protected KeyboardInput keyboard;
-
-    public void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
+    public abstract class GameState : IGameState
     {
-      this.graphics = graphics;
-      this.spriteBatch = new SpriteBatch(graphicsDevice);
-    }
+        protected GraphicsDeviceManager graphics;
+        protected SpriteBatch spriteBatch;
+        protected KeyboardInput keyboard;
 
-    public abstract void SetupInput(KeyboardInput keyboard, MouseInput mouse);
-    public abstract void LoadContent(ContentManager contentManager);
-    public abstract GameStateEnum ProcessInput(GameTime gameTime);
-    public abstract void Render(GameTime gameTime);
-    public abstract void Update(GameTime gameTime);
+        public void Initialize(GraphicsDevice graphicsDevice, GraphicsDeviceManager graphics)
+        {
+            this.graphics = graphics;
+            this.spriteBatch = new SpriteBatch(graphicsDevice);
+        }
+
+        public abstract void SetupInput(KeyboardInput keyboard, MouseInput mouse);
+        public abstract void LoadContent(ContentManager contentManager);
+        public abstract GameStateEnum ProcessInput(GameTime gameTime);
+        public abstract void Render(GameTime gameTime);
+        public abstract void Update(GameTime gameTime);
+    }
+}
  
