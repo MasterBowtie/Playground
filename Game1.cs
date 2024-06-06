@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using System.Collections.Generic;
+using Apedaile;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
@@ -8,6 +10,8 @@ public class Game1 : Game
 {
     private GraphicsDeviceManager _graphics;
     private SpriteBatch _spriteBatch;
+    private Dictionary<GameStateEnum, GameState> states;
+    private GameState currentState;
 
     public Game1()
     {
@@ -19,7 +23,16 @@ public class Game1 : Game
     protected override void Initialize()
     {
         // TODO: Add your initialization logic here
+        states = new Dictionary<GameStateEnum, GameState> {
+            {GameStateEnum.MainMenu, new MainMenu()}
+        };
 
+        foreach (var item in states)
+        {
+            item.Value.Initialize(this.GraphicsDevice, _graphics);
+        }
+
+        currentState = states[GameStateEnum.MainMenu];
         base.Initialize();
     }
 
@@ -27,11 +40,25 @@ public class Game1 : Game
     {
         _spriteBatch = new SpriteBatch(GraphicsDevice);
 
+        foreach (var item in states)
+        {
+            item.Value.LoadContent(this.Content);
+        }
+
         // TODO: use this.Content to load your game content here
     }
 
     protected override void Update(GameTime gameTime)
     {
+        GameStateEnum nextState = currentState.ProcessInput(gameTime);
+
+        if (nextState == GameStateEnum.Exit) {
+            Exit();
+        } else {
+            currentState.Update(gameTime);
+            currentState = states[nextState];
+        }
+
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
 
@@ -43,6 +70,8 @@ public class Game1 : Game
     protected override void Draw(GameTime gameTime)
     {
         GraphicsDevice.Clear(Color.CornflowerBlue);
+
+        currentState.Render(gameTime);
 
         // TODO: Add your drawing code here
 
