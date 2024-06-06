@@ -8,29 +8,41 @@ namespace Playground;
 
 public class Game1 : Game
 {
-    private GraphicsDeviceManager _graphics;
-    private SpriteBatch _spriteBatch;
+    private GraphicsDeviceManager graphics;
+    private SpriteBatch spriteBatch;
     private Dictionary<GameStateEnum, GameState> states;
     private GameState currentState;
+    private KeyboardInput keyboard;
+    private MouseInput mouse;
 
     public Game1()
     {
-        _graphics = new GraphicsDeviceManager(this);
+        graphics = new GraphicsDeviceManager(this);
         Content.RootDirectory = "Content";
         IsMouseVisible = true;
     }
 
     protected override void Initialize()
     {
+
+        graphics.PreferredBackBufferWidth = 1920;
+        graphics.PreferredBackBufferHeight = 1080;
+        graphics.ApplyChanges();
         // TODO: Add your initialization logic here
+
+        keyboard = new KeyboardInput();
+        mouse = new MouseInput();
         states = new Dictionary<GameStateEnum, GameState> {
             {GameStateEnum.MainMenu, new MainMenu()}
         };
 
         foreach (var item in states)
         {
-            item.Value.Initialize(this.GraphicsDevice, _graphics);
+            item.Value.Initialize(this.GraphicsDevice, graphics);
         }
+
+
+        states[GameStateEnum.MainMenu].SetupInput(keyboard, mouse);
 
         currentState = states[GameStateEnum.MainMenu];
         base.Initialize();
@@ -38,7 +50,7 @@ public class Game1 : Game
 
     protected override void LoadContent()
     {
-        _spriteBatch = new SpriteBatch(GraphicsDevice);
+        spriteBatch = new SpriteBatch(GraphicsDevice);
 
         foreach (var item in states)
         {
@@ -51,6 +63,8 @@ public class Game1 : Game
     protected override void Update(GameTime gameTime)
     {
         GameStateEnum nextState = currentState.ProcessInput(gameTime);
+        mouse.Update(gameTime, nextState);
+        keyboard.Update(gameTime, nextState);
 
         if (nextState == GameStateEnum.Exit) {
             Exit();
@@ -61,6 +75,7 @@ public class Game1 : Game
 
         if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
             Exit();
+
 
         // TODO: Add your update logic here
 

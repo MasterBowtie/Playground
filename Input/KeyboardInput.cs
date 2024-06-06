@@ -8,36 +8,21 @@ namespace Apedaile
   public class KeyboardInput : IInputDevice
   {
     private KeyboardState previousState;
-    private Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry>> stateCommands = new Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry>>();
+    private Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry_K>> stateCommands = new Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry_K>>();
 
-    public struct CommandEntry
-    {
-      public Keys key;
-      public bool keyPressOnly;
-      public IInputDevice.CommandDelegate callback;
-      public Actions action;
 
-      public CommandEntry(Keys key, bool keyPressOnly, IInputDevice.CommandDelegate callback, Actions action)
-      {
-        this.key = key;
-        this.keyPressOnly = keyPressOnly;
-        this.callback = callback;
-        this.action = action;
-      } 
-    }
-
-    public Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry>> getStateCommands() 
+    public Dictionary<GameStateEnum, Dictionary<Actions, CommandEntry_K>> getStateCommands()
     {
       return stateCommands;
     }
 
     public void registerCommand(Keys key, bool keyPressOnly, IInputDevice.CommandDelegate callback, GameStateEnum state, Actions action)
     {
-      if (stateCommands.ContainsKey(state)) 
+      if (stateCommands.ContainsKey(state))
       {
         var commandEntries = stateCommands[state];
         Actions remove = Actions.none;
-        foreach (var item in commandEntries) 
+        foreach (var item in commandEntries)
         {
           if (item.Value.callback == callback)
           {
@@ -52,37 +37,41 @@ namespace Apedaile
           commandEntries.Remove(action);
         }
 
-        commandEntries.Add(action, new CommandEntry(key, keyPressOnly, callback, action));
+        commandEntries.Add(action, new CommandEntry_K(key, keyPressOnly, callback, action));
       }
-      else 
+      else
       {
-        stateCommands.Add(state, new Dictionary<Actions, CommandEntry>());
-        stateCommands[state].Add(action, new CommandEntry(key, keyPressOnly, callback, action));
+        stateCommands.Add(state, new Dictionary<Actions, CommandEntry_K>());
+        stateCommands[state].Add(action, new CommandEntry_K(key, keyPressOnly, callback, action));
       }
     }
 
-    public void Update(GameTime gameTime)
+    public void Update(GameTime gameTime, GameStateEnum state)
     {
       KeyboardState keyState = Keyboard.GetState();
-      
-      foreach (var commandEntries in stateCommands.Values) 
+
+      if (state == GameStateEnum.Exit)
       {
-        foreach (CommandEntry entry in commandEntries.Values)
+        return;
+      }
+
+      Dictionary<Actions, CommandEntry_K> commandEntries = stateCommands[state];
+      foreach (CommandEntry_K entry in commandEntries.Values)
+      {
+        if (entry.keyPressOnly && keyPressed(entry.key))
         {
-          if (entry.keyPressOnly && keyPressed(entry.key))
-          {
-            entry.callback(gameTime, 1.0f);
-          }
-          else if (!entry.keyPressOnly && keyState.IsKeyDown(entry.key)) 
-          {
-            entry.callback(gameTime, 1.0f);
-          }
+          entry.callback(gameTime, 1.0f);
+        }
+        else if (!entry.keyPressOnly && keyState.IsKeyDown(entry.key))
+        {
+          entry.callback(gameTime, 1.0f);
         }
         previousState = keyState;
       }
     }
 
-    private bool keyPressed(Keys key) {
+    private bool keyPressed(Keys key)
+    {
       return (Keyboard.GetState().IsKeyDown(key) && !previousState.IsKeyDown(key));
     }
   }

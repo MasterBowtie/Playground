@@ -12,13 +12,14 @@ class MainMenu : GameState
         Exit
     }
 
-    private SpriteFont CP_24;
+    private SpriteFont CP_48;
+    private MouseInput mouseInput;
     
 
 
     public override void LoadContent(ContentManager contentManager)
     {
-        CP_24 = contentManager.Load<SpriteFont>("Fonts/CP_24");
+        CP_48 = contentManager.Load<SpriteFont>("Fonts/CP_48");
 
         // throw new System.NotImplementedException();
     }
@@ -32,17 +33,22 @@ class MainMenu : GameState
     {
         spriteBatch.Begin();
 
-        spriteBatch.DrawString(CP_24, "Hello World", new Vector2(graphics.PreferredBackBufferWidth/2, graphics.PreferredBackBufferHeight/2), Color.White);
+        spriteBatch.DrawString(CP_48, "Hello World", new Vector2(graphics.PreferredBackBufferWidth/2, graphics.PreferredBackBufferHeight/2), Color.White);
 
         spriteBatch.End();
         // throw new System.NotImplementedException();
     }
-    public override void SetupInput(KeyboardInput keyboard)
+    public override void SetupInput(KeyboardInput keyboard, MouseInput mouse)
     {
+        mouse.registerCommand("LeftButton", true, PrintHello, GameStateEnum.MainMenu, Actions.select);
         // throw new System.NotImplementedException();
     }
     public override void Update(GameTime gameTime)
     {
         // throw new System.NotImplementedException();
+    }
+
+    private void PrintHello(GameTime gameTime, float value) {
+        System.Console.WriteLine("Left Button Pressed");
     }
 }

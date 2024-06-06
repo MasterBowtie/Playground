@@ -18,10 +18,9 @@ namespace Apedaile
       this.spriteBatch = new SpriteBatch(graphicsDevice);
     }
 
-    public abstract void SetupInput(KeyboardInput keyboard);
+    public abstract void SetupInput(KeyboardInput keyboard, MouseInput mouse);
     public abstract void LoadContent(ContentManager contentManager);
     public abstract GameStateEnum ProcessInput(GameTime gameTime);
     public abstract void Render(GameTime gameTime);
     public abstract void Update(GameTime gameTime);
-  }
-}
+ 
