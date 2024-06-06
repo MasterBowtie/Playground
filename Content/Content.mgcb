@@ -13,3 +13,10 @@
 
 #---------------------------------- Content ---------------------------------#
 
+#begin Fonts/CP_24.spritefont
+/importer:FontDescriptionImporter
+/processor:FontDescriptionProcessor
+/processorParam:PremultiplyAlpha=True
+/processorParam:TextureFormat=Compressed
+/build:Fonts/CP_24.spritefont
+
